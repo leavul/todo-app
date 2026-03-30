@@ -1,8 +1,8 @@
 import { FontAwesome5, FontAwesome6 } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-export default function TaskItem() {
-    const isCompleted = false;
+export default function TaskItem({ task }: { task: any }) {
+    const isCompleted = task.isCompleted;
 
     return (
         <View style={styles.container}>
@@ -11,10 +11,10 @@ export default function TaskItem() {
                     style={[styles.checkbox, isCompleted && styles.checkboxCompleted]}
                     onPress={() => { }}
                 >
-                    {isCompleted && <FontAwesome5 name="check" size={12} color="white" />}
+                    {isCompleted && <FontAwesome5 name="check" size={12} color="black" />}
                 </Pressable>
 
-                <Text style={[styles.title, isCompleted && styles.titleCompleted]}>Title</Text>
+                <Text style={[styles.title, isCompleted && styles.titleCompleted]}>{task.title}</Text>
             </View>
 
             <View style={styles.actionsContainer}>
@@ -38,36 +38,40 @@ export default function TaskItem() {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        backgroundColor: "#212121",
-        borderColor: "#2d2d2d",
+        backgroundColor: '#2d2d2d',
         borderWidth: 1,
+        borderColor: "#484848",
         padding: 16,
-        margin: 16,
-        borderRadius: 8,
+        paddingVertical: 24,
+        borderRadius: 12,
     },
     taskContent: {
+        flex: 1,
+        flexWrap: 'wrap',
         flexDirection: "row",
         alignItems: "center",
-        gap: 12,
+        gap: 16,
     },
     checkbox: {
         height: 24,
         width: 24,
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 12,
-        borderColor: "#2d2d2d",
-        borderWidth: 2,
+        borderWidth: 1,
+        borderColor: '#484848',
+        borderRadius: 10,
         backgroundColor: "#212121",
     },
     checkboxCompleted: {
-        backgroundColor: "#81d458",
-        borderColor: "#81d458",
+        backgroundColor: "white",
+        borderColor: "white",
     },
     title: {
+        flex: 1,
         color: "white",
         fontSize: 18,
         fontWeight: "500",
