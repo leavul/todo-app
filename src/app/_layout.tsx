@@ -13,8 +13,8 @@ export default function RootLayout() {
         labelStyle={{ selected: { color: 'white' } }}
 
       >
-        <NativeTabs.Trigger name="list">
-          <NativeTabs.Trigger.Label>List</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger name="tasks">
+          <NativeTabs.Trigger.Label>Tasks</NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon
             sf={{ default: 'list.bullet.clipboard', selected: 'list.bullet.clipboard.fill' }}
             md="checklist"

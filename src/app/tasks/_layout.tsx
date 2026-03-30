@@ -2,13 +2,13 @@ import { Stack } from 'expo-router'
 import React from 'react'
 import { Platform } from 'react-native'
 
-export default function ListLayout() {
+export default function TasksLayout() {
     return (
         <Stack>
             <Stack.Screen
                 name="index"
                 options={{
-                    title: "List",
+                    title: "Tasks",
                     headerLargeTitleEnabled: true,
                     headerStyle: {
                         backgroundColor: Platform.OS === 'android' ? '#303030' : undefined,

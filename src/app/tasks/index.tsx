@@ -2,7 +2,7 @@ import TaskItem from "@/components/task-item";
 import { taskItems } from "@/constants/dummy-data";
 import { FlatList, StyleSheet } from "react-native";
 
-export default function Index() {
+export default function TasksScreen() {
   return (
     <FlatList
       style={styles.container}
