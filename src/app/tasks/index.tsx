@@ -1,12 +1,24 @@
 import TodoCard from "@/components/todo-card";
 import { useTodoStore } from "@/store/use-todo-store";
 import { FontAwesome6 } from "@expo/vector-icons";
-import { FlatList, Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { FlatList, Keyboard, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
 const addButtonBottomOffset = Platform.OS === 'android' ? 30 : 100;
 
 export default function TasksScreen() {
-  const { todos, toggleTodo, removeTodo } = useTodoStore();
+  const { todos, toggleTodo, addTodo, removeTodo } = useTodoStore();
+
+  const [newTodoTitle, setNewTodoTitle] = useState("");
+
+  const handleAddTodo = () => {
+    if (newTodoTitle.trim() === "") return;
+
+    addTodo(newTodoTitle.trim());
+    setNewTodoTitle("");
+    Keyboard.dismiss();
+  }
 
   const handleToggleCompleted = (id: string) => {
     toggleTodo(id);
@@ -41,9 +53,25 @@ export default function TasksScreen() {
         />
       )}
 
-      <Pressable style={styles.addButton}>
-        <FontAwesome6 name="plus" size={20} color="white" />
-      </Pressable>
+      <KeyboardAvoidingView
+        style={styles.addTodoContainer}
+        behavior={'padding'}
+        keyboardVerticalOffset={16}
+      >
+        <TextInput
+          style={styles.input}
+          placeholder="Add a new task"
+          placeholderTextColor="#757575"
+          value={newTodoTitle}
+          onChangeText={setNewTodoTitle}
+        />
+        <Pressable
+          style={styles.addButton}
+          onPress={handleAddTodo}
+        >
+          <FontAwesome6 name="plus" size={20} color="white" />
+        </Pressable>
+      </KeyboardAvoidingView>
     </>
   );
 }
@@ -70,10 +98,25 @@ const styles = StyleSheet.create({
     gap: 16,
   },
 
-  addButton: {
+  addTodoContainer: {
     position: "absolute",
     bottom: addButtonBottomOffset,
-    right: 24,
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    gap: 8
+  },
+  input: {
+    flex: 1,
+    height: 56,
+    backgroundColor: "#2d2d2d",
+    borderWidth: 1,
+    borderColor: "#484848",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    color: "white",
+    boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.4)",
+  },
+  addButton: {
     height: 56,
     width: 56,
     backgroundColor: "#303030",
