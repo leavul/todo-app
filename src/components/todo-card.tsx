@@ -53,9 +53,12 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         gap: 16,
     },
+
     taskContent: {
+        flexShrink: 1,
         gap: 24,
     },
+
     checkbox: {
         height: 24,
         width: 24,
@@ -70,22 +73,24 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderColor: "white",
     },
+
     title: {
         flex: 1,
         color: "white",
         fontSize: 18,
         fontWeight: "500",
-        flexShrink: 1,
     },
     titleCompleted: {
         color: "#595959",
         textDecorationLine: "line-through",
     },
+
     actionsContainer: {
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
     },
+
     actionButton: {
         height: 42,
         width: 42,
@@ -93,9 +98,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
+
     editButton: {
         backgroundColor: "#3e3311",
     },
+
     deleteButton: {
         backgroundColor: "#3E1811",
     },
