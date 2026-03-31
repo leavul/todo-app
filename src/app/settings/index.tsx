@@ -63,14 +63,14 @@ export default function SettingsScreen() {
                             setConfirmModalState({
                                 visible: true,
                                 action: "clearCompleted",
-                                title: "Clear completed tasks?",
+                                title: "Clear Completed Tasks?",
                                 message: `This will remove ${completedTodosCount} completed task${completedTodosCount === 1 ? "" : "s"}.`,
                                 confirmLabel: "Clear",
                             })
                         }
                         disabled={completedTodosCount === 0}
                     >
-                        <Text style={styles.dangerButtonText}>Clear Completed Todos</Text>
+                        <Text style={styles.dangerButtonText}>Clear Completed Tasks</Text>
                         <Text style={styles.dangerButtonHint}>
                             {completedTodosCount === 0
                                 ? "No completed tasks to remove"
@@ -87,14 +87,14 @@ export default function SettingsScreen() {
                             setConfirmModalState({
                                 visible: true,
                                 action: "deleteAll",
-                                title: "Delete all tasks?",
+                                title: "Delete All Tasks?",
                                 message: `This will permanently remove ${totalTodosCount} task${totalTodosCount === 1 ? "" : "s"}.`,
                                 confirmLabel: "Delete All",
                             })
                         }
                         disabled={totalTodosCount === 0}
                     >
-                        <Text style={styles.dangerButtonText}>Delete All Todos</Text>
+                        <Text style={styles.dangerButtonText}>Delete All Tasks</Text>
                         <Text style={styles.dangerButtonHint}>
                             {totalTodosCount === 0
                                 ? "No tasks to delete"
