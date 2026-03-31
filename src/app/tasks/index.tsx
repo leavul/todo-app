@@ -1,6 +1,7 @@
 import TodoCard from "@/components/todo-card";
 import TodoFormModal from "@/components/todo-form-modal";
-import { TodoItem, useTodoStore } from "@/store/use-todo-store";
+import { useTodoStore } from "@/store/use-todo-store";
+import { TodoItem } from "@/types/todo";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useState } from "react";
 import { FlatList, Platform, Pressable, StyleSheet, Text, View } from "react-native";

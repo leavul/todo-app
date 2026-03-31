@@ -1,11 +1,7 @@
-import { dummyData } from "@/constants/dummy-data";
+import { zustandStorage } from "@/storage/todo-storage";
+import { TodoItem } from "@/types/todo";
 import { create } from "zustand";
-
-export type TodoItem = {
-    id: string;
-    title: string;
-    completed: boolean;
-}
+import { createJSONStorage, persist } from "zustand/middleware";
 
 type TodoStore = {
     todos: TodoItem[];
@@ -15,8 +11,8 @@ type TodoStore = {
     removeTodo: (id: string) => void;
 }
 
-export const useTodoStore = create<TodoStore>((set) => ({
-    todos: [...dummyData],
+export const useTodoStore = create<TodoStore>()(persist((set) => ({
+    todos: [],
 
     addTodo: (title) =>
         set((state) => ({
@@ -41,4 +37,7 @@ export const useTodoStore = create<TodoStore>((set) => ({
         set((state) => ({
             todos: state.todos.filter((todo) => todo.id !== id),
         })),
+}), {
+    name: 'todo-storage',
+    storage: createJSONStorage(() => zustandStorage),
 }));

@@ -1,4 +1,4 @@
-import type { TodoItem } from '@/store/use-todo-store';
+import type { TodoItem } from '@/types/todo';
 import { FontAwesome5, FontAwesome6 } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
