@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import { Modal, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { KeyboardAvoidingView } from "react-native-keyboard-controller";
-
-const keyboardVerticalOffset = Platform.OS === 'android' ? 48 : 24;
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import ModalShell from "./ui/modal-shell";
 
 type TodoFormModalProps = {
     visible: boolean;
@@ -50,85 +48,48 @@ export default function TodoFormModal({
     };
 
     return (
-        <Modal
+        <ModalShell
             visible={visible}
-            transparent
-            animationType="fade"
+            keyboardAware
+            onRequestClose={onClose}
         >
-            <Pressable
-                style={styles.overlay}
-                onPress={onClose}
-            >
-                <KeyboardAvoidingView
-                    style={styles.avoidingViewContainer}
-                    behavior={'padding'}
-                    keyboardVerticalOffset={keyboardVerticalOffset}
+            <Text style={styles.title}>{title}</Text>
+            <TextInput
+                style={[
+                    styles.input,
+                    showError && styles.inputError,
+                ]}
+                value={inputValue}
+                onChangeText={handleInputChange}
+                placeholder={inputPlaceholder}
+                placeholderTextColor={"#595959"}
+                autoFocus
+            />
+
+            {showError && (
+                <Text style={styles.errorText}>Cannot be empty</Text>
+            )}
+
+            <View style={styles.actionButtonsContainer}>
+                <Pressable
+                    style={[styles.actionButton, styles.cancelButton]}
+                    onPress={onClose}
                 >
-                    <Pressable
-                        style={styles.modal}
-                        onPress={(e) => e.stopPropagation()}
-                    >
-                        <Text style={styles.title}>{title}</Text>
-                        <TextInput
-                            style={[
-                                styles.input,
-                                showError && styles.inputError,
-                            ]}
-                            value={inputValue}
-                            onChangeText={handleInputChange}
-                            placeholder={inputPlaceholder}
-                            placeholderTextColor={"#595959"}
-                            autoFocus
-                        />
+                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                </Pressable>
 
-                        {showError && (
-                            <Text style={styles.errorText}>Cannot be empty</Text>
-                        )}
-
-                        <View style={styles.actionButtonsContainer}>
-                            <Pressable
-                                style={[styles.actionButton, styles.cancelButton]}
-                                onPress={onClose}
-                            >
-                                <Text style={styles.cancelButtonText}>Cancel</Text>
-                            </Pressable>
-
-                            <Pressable
-                                style={[styles.actionButton, styles.submitButton]}
-                                onPress={handleSubmit}
-                            >
-                                <Text style={styles.submitButtonText}>Save</Text>
-                            </Pressable>
-                        </View>
-                    </Pressable>
-                </KeyboardAvoidingView>
-            </Pressable>
-        </Modal >
+                <Pressable
+                    style={[styles.actionButton, styles.submitButton]}
+                    onPress={handleSubmit}
+                >
+                    <Text style={styles.submitButtonText}>Save</Text>
+                </Pressable>
+            </View>
+        </ModalShell>
     );
 }
 
 const styles = StyleSheet.create({
-    overlay: {
-        flex: 1,
-        backgroundColor: "rgba(0,0,0,0.5)",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-
-    avoidingViewContainer: {
-        width: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-
-    modal: {
-        width: "80%",
-        backgroundColor: "#212121",
-        paddingHorizontal: 16,
-        paddingVertical: 24,
-        borderRadius: 12,
-    },
-
     title: {
         fontSize: 18,
         fontWeight: "bold",
