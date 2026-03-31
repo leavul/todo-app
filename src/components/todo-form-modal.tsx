@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import ModalShell from "./ui/modal-shell";
 
@@ -7,7 +6,9 @@ type TodoFormModalProps = {
     title: string;
     inputValue: string;
     inputPlaceholder: string;
+    showError: boolean;
     onChange: (text: string) => void;
+    onChangeShowError: (showError: boolean) => void;
     onClose: () => void;
     onSubmit: () => void;
 };
@@ -17,24 +18,18 @@ export default function TodoFormModal({
     title,
     inputValue,
     inputPlaceholder,
+    showError,
     onChange,
+    onChangeShowError,
     onClose,
     onSubmit,
 }: TodoFormModalProps) {
 
-    const [showError, setShowError] = useState(false);
-
-    useEffect(() => {
-        if (!visible) {
-            setShowError(false);
-        }
-    }, [visible]);
-
     const handleSubmit = () => {
         if (inputValue.trim() === "") {
-            setShowError(true);
+            onChangeShowError(true);
         } else {
-            setShowError(false);
+            // onChangeShowError(false); --- IGNORE ---
             onSubmit();
         }
     };
@@ -43,7 +38,7 @@ export default function TodoFormModal({
         onChange(text);
 
         if (showError && text.trim() !== "") {
-            setShowError(false);
+            onChangeShowError(false);
         }
     };
 

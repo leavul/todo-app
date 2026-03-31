@@ -8,31 +8,41 @@ import { FlatList, Platform, Pressable, StyleSheet, Text, View } from "react-nat
 
 const addButtonBottomOffset = Platform.OS === 'android' ? 30 : 100;
 
+type TodoFormModalState = {
+  visible: boolean;
+  mode: "add" | "edit";
+  title: string;
+  editingTodoId: string | null;
+  inputValue: string;
+  placeholder: string;
+  showError?: boolean;
+};
+
 export default function TasksScreen() {
   const { todos, addTodo, toggleTodo, updateTodo, removeTodo } = useTodoStore();
 
-  const [todoModalVisible, setTodoModalVisible] = useState(false);
-  const [todoTitle, setTodoTitle] = useState("");
-  const [editingTodo, setEditingTodo] = useState<TodoItem | null>(null);
+  const [todoFormModalState, setTodoFormModalState] = useState<TodoFormModalState | null>(null);
 
   const handleCloseTodoModal = () => {
-    setTodoModalVisible(false);
+    setTodoFormModalState((currentState) => {
+      if (currentState === null) {
+        return null;
+      }
 
-    // Delay state reset until after modal close animation finishes.
-    // Using setTimeout instead of Modal.onDismiss because onDismiss is unreliable on Android.
-    // If we reset state immediately, it causes a visible flicker (value/placeholder change before close).
-    // 150ms roughly matches the modal fade animation duration.
-    setTimeout(() => {
-      setTodoTitle("");
-      setEditingTodo(null);
-    }, 150);
+      return {
+        ...currentState,
+        visible: false,
+      };
+    });
   }
 
   const handleSubmitTodo = () => {
-    if (editingTodo) {
-      updateTodo(editingTodo.id, todoTitle);
-    } else {
-      addTodo(todoTitle);
+    if (!todoFormModalState) return;
+
+    if (todoFormModalState?.mode === "add") {
+      todoFormModalState.inputValue && addTodo(todoFormModalState.inputValue);
+    } else if (todoFormModalState?.mode === "edit") {
+      todoFormModalState.editingTodoId && updateTodo(todoFormModalState.editingTodoId, todoFormModalState.inputValue);
     }
   };
 
@@ -41,9 +51,14 @@ export default function TasksScreen() {
   };
 
   const handlePressEdit = (todo: TodoItem) => {
-    setEditingTodo(todo);
-    setTodoTitle(todo.title);
-    setTodoModalVisible(true);
+    setTodoFormModalState({
+      visible: true,
+      mode: "edit",
+      title: "Edit Task",
+      editingTodoId: todo.id,
+      inputValue: todo.title,
+      placeholder: todo.title,
+    });
   }
 
   const handleDelete = (id: string) => {
@@ -78,17 +93,28 @@ export default function TasksScreen() {
 
       <Pressable
         style={styles.addButton}
-        onPress={() => setTodoModalVisible(true)}
+        onPress={() =>
+          setTodoFormModalState({
+            visible: true,
+            mode: "add",
+            title: "New Task",
+            editingTodoId: null,
+            inputValue: "",
+            placeholder: "Add a new task",
+          })
+        }
       >
         <FontAwesome6 name="plus" size={20} color="white" />
       </Pressable>
 
       <TodoFormModal
-        visible={todoModalVisible}
-        title={editingTodo ? "Edit Task" : "New Task"}
-        inputValue={todoTitle}
-        inputPlaceholder={editingTodo ? editingTodo.title : "Add a new task"}
-        onChange={setTodoTitle}
+        visible={todoFormModalState?.visible ?? false}
+        title={todoFormModalState?.title ?? ""}
+        inputValue={todoFormModalState?.inputValue ?? ""}
+        inputPlaceholder={todoFormModalState?.placeholder ?? ""}
+        showError={todoFormModalState?.showError ?? false}
+        onChange={(inputValue) => setTodoFormModalState((currentState) => currentState ? { ...currentState, inputValue } : null)}
+        onChangeShowError={(showError) => setTodoFormModalState((currentState) => currentState ? { ...currentState, showError } : null)}
         onClose={handleCloseTodoModal}
         onSubmit={() => {
           handleSubmitTodo()

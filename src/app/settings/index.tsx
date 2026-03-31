@@ -41,8 +41,6 @@ export default function SettingsScreen() {
         if (confirmModalState?.action === "deleteAll") {
             deleteAllTodos();
         }
-
-        handleCloseConfirmModal();
     };
 
     return (
@@ -108,10 +106,13 @@ export default function SettingsScreen() {
                 visible={confirmModalState?.visible ?? false}
                 title={confirmModalState?.title ?? ""}
                 message={confirmModalState?.message ?? ""}
-                confirmLabel={confirmModalState?.confirmLabel ?? ""}
                 destructive
+                confirmLabel={confirmModalState?.confirmLabel ?? ""}
                 onClose={handleCloseConfirmModal}
-                onConfirm={handleConfirmAction}
+                onConfirm={() => {
+                    handleConfirmAction();
+                    handleCloseConfirmModal();
+                }}
             />
         </>
     );
