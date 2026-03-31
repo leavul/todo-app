@@ -9,6 +9,8 @@ type TodoStore = {
     toggleTodo: (id: string) => void;
     updateTodo: (id: string, title: string) => void;
     removeTodo: (id: string) => void;
+    clearCompletedTodos: () => void;
+    deleteAllTodos: () => void;
 }
 
 export const useTodoStore = create<TodoStore>()(persist((set) => ({
@@ -37,6 +39,16 @@ export const useTodoStore = create<TodoStore>()(persist((set) => ({
         set((state) => ({
             todos: state.todos.filter((todo) => todo.id !== id),
         })),
+
+    clearCompletedTodos: () =>
+        set((state) => ({
+            todos: state.todos.filter((todo) => !todo.completed),
+        })),
+
+    deleteAllTodos: () =>
+        set({
+            todos: [],
+        }),
 }), {
     name: 'todo-storage',
     storage: createJSONStorage(() => zustandStorage),
