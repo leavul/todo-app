@@ -64,7 +64,10 @@ export default function TodoFormModal({
                     behavior={'padding'}
                     keyboardVerticalOffset={keyboardVerticalOffset}
                 >
-                    <View style={styles.modal}>
+                    <Pressable
+                        style={styles.modal}
+                        onPress={(e) => e.stopPropagation()}
+                    >
                         <Text style={styles.title}>{title}</Text>
                         <TextInput
                             style={[
@@ -97,7 +100,7 @@ export default function TodoFormModal({
                                 <Text style={styles.submitButtonText}>Save</Text>
                             </Pressable>
                         </View>
-                    </View>
+                    </Pressable>
                 </KeyboardAvoidingView>
             </Pressable>
         </Modal >
