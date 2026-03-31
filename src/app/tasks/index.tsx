@@ -1,28 +1,49 @@
 import TodoCard from "@/components/todo-card";
-import { useTodoStore } from "@/store/use-todo-store";
+import TodoFormModal from "@/components/todo-form-modal";
+import { TodoItem, useTodoStore } from "@/store/use-todo-store";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useState } from "react";
-import { FlatList, Keyboard, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+import { FlatList, Platform, Pressable, StyleSheet, Text, View } from "react-native";
 
 const addButtonBottomOffset = Platform.OS === 'android' ? 30 : 100;
 
 export default function TasksScreen() {
-  const { todos, toggleTodo, addTodo, removeTodo } = useTodoStore();
+  const { todos, addTodo, toggleTodo, updateTodo, removeTodo } = useTodoStore();
 
-  const [newTodoTitle, setNewTodoTitle] = useState("");
+  const [todoModalVisible, setTodoModalVisible] = useState(false);
+  const [todoTitle, setTodoTitle] = useState("");
+  const [editingTodo, setEditingTodo] = useState<TodoItem | null>(null);
 
-  const handleAddTodo = () => {
-    if (newTodoTitle.trim() === "") return;
+  const handleCloseTodoModal = () => {
+    setTodoModalVisible(false);
 
-    addTodo(newTodoTitle.trim());
-    setNewTodoTitle("");
-    Keyboard.dismiss();
+    // Delay state reset until after modal close animation finishes.
+    // Using setTimeout instead of Modal.onDismiss because onDismiss is unreliable on Android.
+    // If we reset state immediately, it causes a visible flicker (value/placeholder change before close).
+    // 150ms roughly matches the modal fade animation duration.
+    setTimeout(() => {
+      setTodoTitle("");
+      setEditingTodo(null);
+    }, 150);
   }
+
+  const handleSubmitTodo = () => {
+    if (editingTodo) {
+      updateTodo(editingTodo.id, todoTitle);
+    } else {
+      addTodo(todoTitle);
+    }
+  };
 
   const handleToggleCompleted = (id: string) => {
     toggleTodo(id);
   };
+
+  const handlePressEdit = (todo: TodoItem) => {
+    setEditingTodo(todo);
+    setTodoTitle(todo.title);
+    setTodoModalVisible(true);
+  }
 
   const handleDelete = (id: string) => {
     removeTodo(id);
@@ -41,37 +62,38 @@ export default function TasksScreen() {
           data={todos}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.todosContentContainer}
-          renderItem={({ item }) => <TodoCard todo={item} onToggleCompleted={handleToggleCompleted} onDelete={handleDelete} />}
-          ListEmptyComponent={() => (
-            <View style={styles.noTodosContainer}>
-              <Text style={styles.noTodosText}>There is no tasks</Text>
-              <Text style={styles.noTodosText}>Add one to get started 🚀</Text>
-            </View>
+          renderItem={({ item }) => (
+            <TodoCard
+              todo={item}
+              onToggleCompleted={() => handleToggleCompleted(item.id)}
+              onEdit={() => handlePressEdit(item)}
+              onDelete={() => handleDelete(item.id)}
+            />
           )}
           contentInsetAdjustmentBehavior="automatic"
           showsVerticalScrollIndicator={false}
         />
       )}
 
-      <KeyboardAvoidingView
-        style={styles.addTodoContainer}
-        behavior={'padding'}
-        keyboardVerticalOffset={16}
+      <Pressable
+        style={styles.addButton}
+        onPress={() => setTodoModalVisible(true)}
       >
-        <TextInput
-          style={styles.input}
-          placeholder="Add a new task"
-          placeholderTextColor="#757575"
-          value={newTodoTitle}
-          onChangeText={setNewTodoTitle}
-        />
-        <Pressable
-          style={styles.addButton}
-          onPress={handleAddTodo}
-        >
-          <FontAwesome6 name="plus" size={20} color="white" />
-        </Pressable>
-      </KeyboardAvoidingView>
+        <FontAwesome6 name="plus" size={20} color="white" />
+      </Pressable>
+
+      <TodoFormModal
+        visible={todoModalVisible}
+        title={editingTodo ? "Edit Task" : "New Task"}
+        inputValue={todoTitle}
+        inputPlaceholder={editingTodo ? editingTodo.title : "Add a new task"}
+        onChange={setTodoTitle}
+        onClose={handleCloseTodoModal}
+        onSubmit={() => {
+          handleSubmitTodo()
+          handleCloseTodoModal();
+        }}
+      />
     </>
   );
 }
@@ -97,26 +119,11 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
     gap: 16,
   },
-
-  addTodoContainer: {
+  addButton: {
     position: "absolute",
     bottom: addButtonBottomOffset,
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    gap: 8
-  },
-  input: {
-    flex: 1,
-    height: 56,
-    backgroundColor: "#2d2d2d",
-    borderWidth: 1,
-    borderColor: "#484848",
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    color: "white",
-    boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.4)",
-  },
-  addButton: {
+    right: 24,
+
     height: 56,
     width: 56,
     backgroundColor: "#303030",

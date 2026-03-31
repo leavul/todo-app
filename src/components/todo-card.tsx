@@ -4,41 +4,38 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 type TodoItemProps = {
     todo: TodoItem;
-    onToggleCompleted: (id: string) => void;
-    // onEdit: (id: string) => void;
-    onDelete: (id: string) => void;
+    onToggleCompleted: () => void;
+    onEdit: () => void;
+    onDelete: () => void;
 }
-export default function TodoCard({ todo, onToggleCompleted, onDelete }: TodoItemProps) {
-    const todoId = todo.id;
-    const completed = todo.completed;
-
+export default function TodoCard({ todo, onToggleCompleted, onEdit, onDelete }: TodoItemProps) {
     return (
         <View style={styles.container}>
+            <Pressable
+                style={[styles.checkbox, todo.completed && styles.checkboxCompleted]}
+                onPress={() => onToggleCompleted()}
+            >
+                {todo.completed && <FontAwesome5 name="check" size={12} color="black" />}
+            </Pressable>
+
             <View style={styles.taskContent}>
-                <Pressable
-                    style={[styles.checkbox, completed && styles.checkboxCompleted]}
-                    onPress={() => onToggleCompleted(todoId)}
-                >
-                    {completed && <FontAwesome5 name="check" size={12} color="black" />}
-                </Pressable>
+                <Text style={[styles.title, todo.completed && styles.titleCompleted]}>{todo.title}</Text>
 
-                <Text style={[styles.title, completed && styles.titleCompleted]}>{todo.title}</Text>
-            </View>
+                <View style={styles.actionsContainer}>
+                    <Pressable
+                        style={[styles.actionButton, styles.editButton]}
+                        onPress={onEdit}
+                    >
+                        <FontAwesome6 name="edit" size={16} color="#d4c158" />
+                    </Pressable>
 
-            <View style={styles.actionsContainer}>
-                <Pressable
-                    style={[styles.actionButton, styles.editButton]}
-                    onPress={() => { }}
-                >
-                    <FontAwesome6 name="edit" size={13} color="#d4c158" />
-                </Pressable>
-
-                <Pressable
-                    style={[styles.actionButton, styles.deleteButton]}
-                    onPress={() => onDelete(todoId)}
-                >
-                    <FontAwesome6 name="trash" size={13} color="#d45f58" />
-                </Pressable>
+                    <Pressable
+                        style={[styles.actionButton, styles.deleteButton]}
+                        onPress={onDelete}
+                    >
+                        <FontAwesome6 name="trash" size={16} color="#d45f58" />
+                    </Pressable>
+                </View>
             </View>
         </View >
     )
@@ -47,22 +44,17 @@ export default function TodoCard({ todo, onToggleCompleted, onDelete }: TodoItem
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
+        flexDirection: 'row',
         backgroundColor: '#2d2d2d',
         borderWidth: 1,
         borderColor: "#484848",
-        padding: 16,
+        paddingHorizontal: 16,
         paddingVertical: 24,
         borderRadius: 12,
+        gap: 16,
     },
     taskContent: {
-        flex: 1,
-        flexWrap: 'wrap',
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 16,
+        gap: 24,
     },
     checkbox: {
         height: 24,
@@ -95,8 +87,8 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     actionButton: {
-        height: 36,
-        width: 36,
+        height: 42,
+        width: 42,
         borderRadius: 12,
         alignItems: "center",
         justifyContent: "center",
