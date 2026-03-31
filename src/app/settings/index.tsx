@@ -1,75 +1,119 @@
+import ConfirmModal from "@/components/confirm-modal";
 import { useTodoStore } from "@/store/use-todo-store";
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+
+type ConfirmAction = "clearCompleted" | "deleteAll";
+
+type ConfirmModalState = {
+    visible: boolean;
+    action: ConfirmAction;
+    title: string;
+    message: string;
+    confirmLabel: string;
+};
 
 export default function SettingsScreen() {
     const { todos, clearCompletedTodos, deleteAllTodos } = useTodoStore();
+    const [confirmModalState, setConfirmModalState] = useState<ConfirmModalState | null>(null);
 
     const completedTodosCount = todos.filter((todo) => todo.completed).length;
     const totalTodosCount = todos.length;
 
-    const handleClearCompletedTodos = () => {
-        Alert.alert(
-            "Clear completed tasks?",
-            `This will remove ${completedTodosCount} completed task${completedTodosCount === 1 ? "" : "s"}.`,
-            [
-                { text: "Cancel", style: "cancel" },
-                { text: "Clear", style: "destructive", onPress: clearCompletedTodos },
-            ]
-        );
+    const handleCloseConfirmModal = () => {
+        setConfirmModalState((currentState) => {
+            if (currentState === null) {
+                return null;
+            }
+
+            return {
+                ...currentState,
+                visible: false,
+            };
+        });
     };
 
-    const handleDeleteAllTodos = () => {
-        Alert.alert(
-            "Delete all tasks?",
-            `This will permanently remove ${totalTodosCount} task${totalTodosCount === 1 ? "" : "s"}.`,
-            [
-                { text: "Cancel", style: "cancel" },
-                { text: "Delete All", style: "destructive", onPress: deleteAllTodos },
-            ]
-        );
+    const handleConfirmAction = () => {
+        if (confirmModalState?.action === "clearCompleted") {
+            clearCompletedTodos();
+        }
+
+        if (confirmModalState?.action === "deleteAll") {
+            deleteAllTodos();
+        }
+
+        handleCloseConfirmModal();
     };
 
     return (
-        <ScrollView style={styles.container}>
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Danger Zone</Text>
-                <Text style={styles.sectionDescription}>
-                    These actions remove tasks and cannot be undone.
-                </Text>
-
-                <Pressable
-                    style={[
-                        styles.dangerButton,
-                        completedTodosCount === 0 && styles.dangerButtonDisabled,
-                    ]}
-                    onPress={handleClearCompletedTodos}
-                    disabled={completedTodosCount === 0}
-                >
-                    <Text style={styles.dangerButtonText}>Clear Completed Todos</Text>
-                    <Text style={styles.dangerButtonHint}>
-                        {completedTodosCount === 0
-                            ? "No completed tasks to remove"
-                            : `${completedTodosCount} completed task${completedTodosCount === 1 ? "" : "s"} ready to clear`}
+        <>
+            <ScrollView style={styles.container}>
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Danger Zone</Text>
+                    <Text style={styles.sectionDescription}>
+                        These actions remove tasks and cannot be undone.
                     </Text>
-                </Pressable>
 
-                <Pressable
-                    style={[
-                        styles.dangerButton,
-                        totalTodosCount === 0 && styles.dangerButtonDisabled,
-                    ]}
-                    onPress={handleDeleteAllTodos}
-                    disabled={totalTodosCount === 0}
-                >
-                    <Text style={styles.dangerButtonText}>Delete All Todos</Text>
-                    <Text style={styles.dangerButtonHint}>
-                        {totalTodosCount === 0
-                            ? "No tasks to delete"
-                            : `${totalTodosCount} task${totalTodosCount === 1 ? "" : "s"} will be removed`}
-                    </Text>
-                </Pressable>
-            </View>
-        </ScrollView>
+                    <Pressable
+                        style={[
+                            styles.dangerButton,
+                            completedTodosCount === 0 && styles.dangerButtonDisabled,
+                        ]}
+                        onPress={() =>
+                            setConfirmModalState({
+                                visible: true,
+                                action: "clearCompleted",
+                                title: "Clear completed tasks?",
+                                message: `This will remove ${completedTodosCount} completed task${completedTodosCount === 1 ? "" : "s"}.`,
+                                confirmLabel: "Clear",
+                            })
+                        }
+                        disabled={completedTodosCount === 0}
+                    >
+                        <Text style={styles.dangerButtonText}>Clear Completed Todos</Text>
+                        <Text style={styles.dangerButtonHint}>
+                            {completedTodosCount === 0
+                                ? "No completed tasks to remove"
+                                : `${completedTodosCount} completed task${completedTodosCount === 1 ? "" : "s"} ready to clear`}
+                        </Text>
+                    </Pressable>
+
+                    <Pressable
+                        style={[
+                            styles.dangerButton,
+                            totalTodosCount === 0 && styles.dangerButtonDisabled,
+                        ]}
+                        onPress={() =>
+                            setConfirmModalState({
+                                visible: true,
+                                action: "deleteAll",
+                                title: "Delete all tasks?",
+                                message: `This will permanently remove ${totalTodosCount} task${totalTodosCount === 1 ? "" : "s"}.`,
+                                confirmLabel: "Delete All",
+                            })
+                        }
+                        disabled={totalTodosCount === 0}
+                    >
+                        <Text style={styles.dangerButtonText}>Delete All Todos</Text>
+                        <Text style={styles.dangerButtonHint}>
+                            {totalTodosCount === 0
+                                ? "No tasks to delete"
+                                : `${totalTodosCount} task${totalTodosCount === 1 ? "" : "s"} will be removed`}
+                        </Text>
+                    </Pressable>
+                </View>
+            </ScrollView>
+
+            <ConfirmModal
+                visible={confirmModalState?.visible ?? false}
+                title={confirmModalState?.title ?? ""}
+                message={confirmModalState?.message ?? ""}
+                confirmLabel={confirmModalState?.confirmLabel ?? ""}
+                destructive
+                onClose={handleCloseConfirmModal}
+                onConfirm={handleConfirmAction}
+            />
+        </>
     );
 }
 
