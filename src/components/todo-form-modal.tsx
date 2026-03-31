@@ -1,5 +1,8 @@
-import { Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Modal, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+
+const keyboardVerticalOffset = Platform.OS === 'android' ? 48 : 24;
 
 type TodoFormModalProps = {
     visible: boolean;
@@ -21,9 +24,29 @@ export default function TodoFormModal({
     onSubmit,
 }: TodoFormModalProps) {
 
+    const [showError, setShowError] = useState(false);
+
+    useEffect(() => {
+        if (!visible) {
+            setShowError(false);
+        }
+    }, [visible]);
+
     const handleSubmit = () => {
-        if (inputValue.trim() === "") return;
-        onSubmit();
+        if (inputValue.trim() === "") {
+            setShowError(true);
+        } else {
+            setShowError(false);
+            onSubmit();
+        }
+    };
+
+    const handleInputChange = (text: string) => {
+        onChange(text);
+
+        if (showError && text.trim() !== "") {
+            setShowError(false);
+        }
     };
 
     return (
@@ -39,18 +62,25 @@ export default function TodoFormModal({
                 <KeyboardAvoidingView
                     style={styles.avoidingViewContainer}
                     behavior={'padding'}
-                    keyboardVerticalOffset={24}
+                    keyboardVerticalOffset={keyboardVerticalOffset}
                 >
                     <View style={styles.modal}>
                         <Text style={styles.title}>{title}</Text>
                         <TextInput
+                            style={[
+                                styles.input,
+                                showError && styles.inputError,
+                            ]}
                             value={inputValue}
-                            onChangeText={onChange}
+                            onChangeText={handleInputChange}
                             placeholder={inputPlaceholder}
                             placeholderTextColor={"#595959"}
                             autoFocus
-                            style={styles.input}
                         />
+
+                        {showError && (
+                            <Text style={styles.errorText}>Cannot be empty</Text>
+                        )}
 
                         <View style={styles.actionButtonsContainer}>
                             <Pressable
@@ -111,6 +141,16 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 8,
         color: "white",
+    },
+    inputError: {
+        borderColor: "#ff4444",
+    },
+
+    errorText: {
+        color: "#ff4444",
+        fontSize: 12,
+        marginTop: 6,
+        fontWeight: "500",
     },
 
     actionButtonsContainer: {
