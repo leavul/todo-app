@@ -1,56 +1,50 @@
-# Welcome to your Expo app 👋
+# Todo App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A simple todo app built with React Native and Expo.
 
-## Get started
+## Features
 
-1. Install dependencies
+- Add / Edit / Mark as completed / Delete tasks
+- Reorder tasks with drag and drop
+- Clear completed tasks or remove all tasks
+- Persist tasks locally on the device
 
-   ```bash
-   npm install
-   ```
+## Built With
 
-2. Start the app
+- Expo
+- TypeScript
+- Zustand
+- React Native MMKV
 
-   ```bash
-   npx expo start
-   ```
+## What I Learned
 
-In the output, you'll find options to open the app in a
+In this project, I tried the Expo SDK 55 beta and adopted the Liquid Glass style, adding the new top and bottom bars in my app.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Images
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### App Icons (iOS & Android)
+<p align="center">
+  <img width="375" alt="App Icon IOS" src="https://github.com/user-attachments/assets/74cc6a1a-aa5c-454f-8a1b-ef3934bb8585" />
+  <img width="310" alt="App Icon Android" src="https://github.com/user-attachments/assets/55c66420-ec5d-4e4e-b031-9a1692de9cae" />
+</p>
 
-## Get a fresh project
+### App Screens (In-App)
+<p align="center">
+  <img width="250" alt="1" src="https://github.com/user-attachments/assets/fe55d829-b3df-499a-a02d-aa0c47f4fd19" />
+  <img width="250" alt="2" src="https://github.com/user-attachments/assets/6351b1b3-3302-43e3-812e-0829d0876162" />
+  <img width="250" alt="3" src="https://github.com/user-attachments/assets/bb24ec08-fd7a-4ef5-8ffc-6bd88aff40e4" />
+  <img width="250" alt="4" src="https://github.com/user-attachments/assets/b14ebf60-52ae-4619-986b-5093b4c80a2a" />
+  <img width="250" alt="5" src="https://github.com/user-attachments/assets/32b0b771-6083-413a-9e24-6e8421db3103" />
+</p>
 
-When you're ready, run:
+## Run the App
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+This app uses `react-native-mmkv`, so it should be run in a development build, not Expo Go.
 
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+npx expo run
+```
