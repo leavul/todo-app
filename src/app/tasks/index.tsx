@@ -73,6 +73,7 @@ export default function TasksScreen() {
           <Text style={styles.noTodosText}>Add one to get started 🚀</Text>
         </View>
       ) : (
+        // TODO: Replace with DraggableFlatList to allow reordering of todos
         <FlatList
           style={styles.todosContainer}
           data={todos}
