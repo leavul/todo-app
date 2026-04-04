@@ -4,7 +4,8 @@ import { useTodoStore } from "@/store/use-todo-store";
 import { TodoItem } from "@/types/todo";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useState } from "react";
-import { FlatList, Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import DraggableFlatList from "react-native-draggable-flatlist";
 
 const addButtonBottomOffset = Platform.OS === 'android' ? 30 : 100;
 
@@ -19,7 +20,7 @@ type TodoFormModalState = {
 };
 
 export default function TasksScreen() {
-  const { todos, addTodo, toggleTodo, updateTodo, removeTodo } = useTodoStore();
+  const { todos, addTodo, toggleTodo, updateTodo, reorderTodos, removeTodo } = useTodoStore();
 
   const [todoFormModalState, setTodoFormModalState] = useState<TodoFormModalState | null>(null);
 
@@ -73,20 +74,28 @@ export default function TasksScreen() {
           <Text style={styles.noTodosText}>Add one to get started 🚀</Text>
         </View>
       ) : (
-        // TODO: Replace with DraggableFlatList to allow reordering of todos
-        <FlatList
+        // TODO: DraggableFlatList is working but needs more testing — e.g. no flickering during
+        // drag, smooth reorder animation, correct behavior and etc.
+
+        // Note: a deprecation warning for InteractionManager may appear
+        // in dev builds — this comes from the library internals.
+        // it uses InteractionManager under the hood, and React Native is deprecating it.
+        <DraggableFlatList
           style={styles.todosContainer}
           data={todos}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.todosContentContainer}
-          renderItem={({ item }) => (
+          renderItem={({ item, drag, isActive }) => (
             <TodoCard
               todo={item}
+              isActive={isActive}
+              drag={drag}
               onToggleCompleted={() => handleToggleCompleted(item.id)}
               onEdit={() => handlePressEdit(item)}
               onDelete={() => handleDelete(item.id)}
             />
           )}
+          onDragEnd={({ data }) => reorderTodos(data)}
           contentInsetAdjustmentBehavior="automatic"
           showsVerticalScrollIndicator={false}
         />
@@ -139,19 +148,16 @@ const styles = StyleSheet.create({
   },
 
   todosContainer: {
-    flex: 1,
+    height: '100%',
     backgroundColor: "#212121",
   },
   todosContentContainer: {
-    padding: 16,
     paddingBottom: 120,
-    gap: 16,
   },
   addButton: {
     position: "absolute",
     bottom: addButtonBottomOffset,
     right: 24,
-
     height: 56,
     width: 56,
     backgroundColor: "#303030",

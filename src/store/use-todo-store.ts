@@ -8,6 +8,7 @@ type TodoStore = {
     addTodo: (title: string) => void;
     toggleTodo: (id: string) => void;
     updateTodo: (id: string, title: string) => void;
+    reorderTodos: (newData: TodoItem[]) => void;
     removeTodo: (id: string) => void;
     clearCompletedTodos: () => void;
     deleteAllTodos: () => void;
@@ -34,6 +35,9 @@ export const useTodoStore = create<TodoStore>()(persist((set) => ({
                 todo.id === id ? { ...todo, title } : todo
             ),
         })),
+
+    reorderTodos: (newData) =>
+        set({ todos: newData }),
 
     removeTodo: (id) =>
         set((state) => ({

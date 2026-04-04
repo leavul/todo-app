@@ -1,48 +1,57 @@
 import type { TodoItem } from '@/types/todo';
 import { FontAwesome5, FontAwesome6 } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ScaleDecorator } from 'react-native-draggable-flatlist';
 
 type TodoItemProps = {
     todo: TodoItem;
+    isActive: boolean
+    drag: () => void;
     onToggleCompleted: () => void;
     onEdit: () => void;
     onDelete: () => void;
 }
-export default function TodoCard({ todo, onToggleCompleted, onEdit, onDelete }: TodoItemProps) {
+export default function TodoCard({ todo, drag, isActive, onToggleCompleted, onEdit, onDelete }: TodoItemProps) {
     return (
-        <View style={styles.container}>
-            <Pressable
-                style={[styles.checkbox, todo.completed && styles.checkboxCompleted]}
-                onPress={() => onToggleCompleted()}
-            >
-                {todo.completed && <FontAwesome5 name="check" size={12} color="black" />}
+        <ScaleDecorator>
+            <Pressable onLongPress={drag}>
+                <View style={[styles.container, { opacity: isActive ? 0.8 : 1 }]}>
+                    <Pressable
+                        style={[styles.checkbox, todo.completed && styles.checkboxCompleted]}
+                        onPress={() => onToggleCompleted()}
+                    >
+                        {todo.completed && <FontAwesome5 name="check" size={12} color="black" />}
+                    </Pressable>
+
+                    <View style={styles.taskContent}>
+                        <Text style={[styles.title, todo.completed && styles.titleCompleted]}>{todo.title}</Text>
+
+                        <View style={styles.actionsContainer}>
+                            <Pressable
+                                style={[styles.actionButton, styles.editButton]}
+                                onPress={onEdit}
+                            >
+                                <FontAwesome6 name="edit" size={16} color="#d4c158" />
+                            </Pressable>
+
+                            <Pressable
+                                style={[styles.actionButton, styles.deleteButton]}
+                                onPress={onDelete}
+                            >
+                                <FontAwesome6 name="trash" size={16} color="#d45f58" />
+                            </Pressable>
+                        </View>
+                    </View>
+                </View >
             </Pressable>
-
-            <View style={styles.taskContent}>
-                <Text style={[styles.title, todo.completed && styles.titleCompleted]}>{todo.title}</Text>
-
-                <View style={styles.actionsContainer}>
-                    <Pressable
-                        style={[styles.actionButton, styles.editButton]}
-                        onPress={onEdit}
-                    >
-                        <FontAwesome6 name="edit" size={16} color="#d4c158" />
-                    </Pressable>
-
-                    <Pressable
-                        style={[styles.actionButton, styles.deleteButton]}
-                        onPress={onDelete}
-                    >
-                        <FontAwesome6 name="trash" size={16} color="#d45f58" />
-                    </Pressable>
-                </View>
-            </View>
-        </View >
+        </ScaleDecorator>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
+        marginVertical: 8,
+        marginHorizontal: 16,
         flex: 1,
         flexDirection: 'row',
         backgroundColor: '#2d2d2d',

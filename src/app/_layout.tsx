@@ -1,11 +1,13 @@
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { StatusBar } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 
 export default function RootLayout() {
   return (
-    <>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" />
+      
       <KeyboardProvider>
         <NativeTabs
           backgroundColor={'#303030'}
@@ -32,6 +34,6 @@ export default function RootLayout() {
           </NativeTabs.Trigger>
         </NativeTabs>
       </KeyboardProvider>
-    </>
+    </GestureHandlerRootView>
   );
 }
