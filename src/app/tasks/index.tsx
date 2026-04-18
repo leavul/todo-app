@@ -3,9 +3,9 @@ import TodoFormModal from "@/components/todo-form-modal";
 import { useTodoStore } from "@/store/use-todo-store";
 import { TodoItem } from "@/types/todo";
 import { FontAwesome6 } from "@expo/vector-icons";
-import { useState } from "react";
-import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
-import DraggableFlatList from "react-native-draggable-flatlist";
+import { useCallback, useState } from "react";
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import Sortable from "react-native-sortables";
 
 const addButtonBottomOffset = Platform.OS === 'android' ? 30 : 100;
 
@@ -66,6 +66,15 @@ export default function TasksScreen() {
     removeTodo(id);
   };
 
+  const renderItem = useCallback(({ item }: { item: TodoItem }) => (
+    <TodoCard
+      todo={item}
+      onToggleCompleted={() => handleToggleCompleted(item.id)}
+      onEdit={() => handlePressEdit(item)}
+      onDelete={() => handleDelete(item.id)}
+    />
+  ), []);
+
   return (
     <>
       {todos.length === 0 ? (
@@ -74,31 +83,22 @@ export default function TasksScreen() {
           <Text style={styles.noTodosText}>Add one to get started 🚀</Text>
         </View>
       ) : (
-        // TODO: DraggableFlatList is working but needs more testing — e.g. no flickering during
-        // drag, smooth reorder animation, correct behavior and etc.
-
-        // Note: a deprecation warning for InteractionManager may appear
-        // in dev builds — this comes from the library internals.
-        // it uses InteractionManager under the hood, and React Native is deprecating it.
-        <DraggableFlatList
+        <ScrollView
           style={styles.todosContainer}
-          data={todos}
-          keyExtractor={(item) => item.id}
           contentContainerStyle={styles.todosContentContainer}
-          renderItem={({ item, drag, isActive }) => (
-            <TodoCard
-              todo={item}
-              isActive={isActive}
-              drag={drag}
-              onToggleCompleted={() => handleToggleCompleted(item.id)}
-              onEdit={() => handlePressEdit(item)}
-              onDelete={() => handleDelete(item.id)}
-            />
-          )}
-          onDragEnd={({ data }) => reorderTodos(data)}
-          contentInsetAdjustmentBehavior="automatic"
           showsVerticalScrollIndicator={false}
-        />
+          contentInsetAdjustmentBehavior="automatic"
+        >
+          <Sortable.Grid
+            columns={2}
+            data={todos}
+            keyExtractor={(item) => item.id}
+            renderItem={renderItem}
+            onDragEnd={({ data }) => reorderTodos(data)}
+            rowGap={16}
+            columnGap={16}
+          />
+        </ScrollView>
       )}
 
       <Pressable
@@ -149,9 +149,11 @@ const styles = StyleSheet.create({
 
   todosContainer: {
     height: '100%',
+    paddingHorizontal: 16,
     backgroundColor: "#212121",
   },
   todosContentContainer: {
+    paddingTop: 16,
     paddingBottom: 120,
   },
   addButton: {
