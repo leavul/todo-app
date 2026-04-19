@@ -1,5 +1,6 @@
 import TodoCard from "@/components/todo-card";
 import TodoFormModal from "@/components/todo-form-modal";
+import { useSettingsStore } from "@/store/use-settings-store";
 import { useTodoStore } from "@/store/use-todo-store";
 import { TodoItem } from "@/types/todo";
 import { FontAwesome6 } from "@expo/vector-icons";
@@ -20,6 +21,7 @@ type TodoFormModalState = {
 };
 
 export default function TasksScreen() {
+  const { columns } = useSettingsStore();
   const { todos, addTodo, toggleTodo, updateTodo, reorderTodos, removeTodo } = useTodoStore();
 
   const [todoFormModalState, setTodoFormModalState] = useState<TodoFormModalState | null>(null);
@@ -90,7 +92,7 @@ export default function TasksScreen() {
           contentInsetAdjustmentBehavior="automatic"
         >
           <Sortable.Grid
-            columns={2}
+            columns={columns}
             data={todos}
             keyExtractor={(item) => item.id}
             renderItem={renderItem}
@@ -139,6 +141,7 @@ const styles = StyleSheet.create({
   noTodosContainer: {
     flex: 1,
     backgroundColor: "#212121",
+    paddingHorizontal: 16,
     gap: 8,
     justifyContent: "center",
     alignItems: "center",

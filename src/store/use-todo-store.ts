@@ -1,4 +1,4 @@
-import { zustandStorage } from "@/storage/todo-storage";
+import { zustandStorage } from "@/storage";
 import { TodoItem } from "@/types/todo";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";

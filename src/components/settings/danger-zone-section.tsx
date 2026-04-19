@@ -1,0 +1,158 @@
+import { useTodoStore } from '@/store/use-todo-store';
+import { useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import ConfirmModal from '../confirm-modal';
+import SectionCard from './section-card';
+
+type ConfirmAction = "clearCompleted" | "deleteAll";
+
+type ConfirmModalState = {
+    visible: boolean;
+    action: ConfirmAction;
+    title: string;
+    message: string;
+    confirmLabel: string;
+};
+
+function DangerZoneButton({
+    title,
+    hintText,
+    disabled,
+    onPress
+}: {
+    title: string,
+    hintText: string,
+    disabled: boolean
+    onPress: () => void
+}) {
+    return (
+        <Pressable
+            style={[styles.button, disabled && styles.buttonDisabled]}
+            onPress={onPress}
+            disabled={disabled}>
+            <Text style={styles.buttonText}>{title}</Text>
+            <Text style={styles.buttonHintText}>{hintText}</Text>
+        </Pressable>
+    )
+}
+
+export default function DangerZoneSection() {
+    const { todos, clearCompletedTodos, deleteAllTodos } = useTodoStore();
+    const [confirmModalState, setConfirmModalState] = useState<ConfirmModalState | null>(null);
+
+    const completedTodosCount = todos.filter((todo) => todo.completed).length;
+    const totalTodosCount = todos.length;
+
+    const handleCloseConfirmModal = () => {
+        setConfirmModalState((currentState) => {
+            if (currentState === null) {
+                return null;
+            }
+
+            return {
+                ...currentState,
+                visible: false,
+            };
+        });
+    };
+
+    const handleConfirmAction = () => {
+        if (confirmModalState?.action === "clearCompleted") {
+            clearCompletedTodos();
+        }
+
+        if (confirmModalState?.action === "deleteAll") {
+            deleteAllTodos();
+        }
+    };
+
+    return (
+        <>
+            <SectionCard
+                backgroundColor="#2B1F1F"
+                borderColor="#5C2E2E"
+
+                title='Danger Zone'
+                titleColor='#fff1f0'
+
+                description='These actions remove tasks and cannot be undone.'
+                descriptionColor='#D7C1BE'
+            >
+                <View style={styles.container}>
+                    <DangerZoneButton
+                        title='Clear Completed Tasks'
+                        hintText={completedTodosCount === 0
+                            ? "No completed tasks to remove"
+                            : `${completedTodosCount} completed task${completedTodosCount === 1 ? "" : "s"} ready to clear`}
+                        disabled={completedTodosCount === 0}
+                        onPress={() =>
+                            setConfirmModalState({
+                                visible: true,
+                                action: "clearCompleted",
+                                title: "Clear Completed Tasks?",
+                                message: `This will remove ${completedTodosCount} completed task${completedTodosCount === 1 ? "" : "s"}.`,
+                                confirmLabel: "Clear",
+                            })}
+                    />
+                    <DangerZoneButton
+                        title='Delete All Tasks'
+                        hintText={totalTodosCount === 0
+                            ? "No tasks to delete"
+                            : `${totalTodosCount} task${totalTodosCount === 1 ? "" : "s"} will be removed`}
+                        disabled={totalTodosCount === 0}
+                        onPress={() =>
+                            setConfirmModalState({
+                                visible: true,
+                                action: "deleteAll",
+                                title: "Delete All Tasks?",
+                                message: `This will permanently remove ${totalTodosCount} task${totalTodosCount === 1 ? "" : "s"}.`,
+                                confirmLabel: "Delete All",
+                            })
+                        }
+                    />
+                </View>
+            </SectionCard >
+
+            <ConfirmModal
+                visible={confirmModalState?.visible ?? false}
+                title={confirmModalState?.title ?? ""}
+                message={confirmModalState?.message ?? ""}
+                destructive
+                confirmLabel={confirmModalState?.confirmLabel ?? ""}
+                onClose={handleCloseConfirmModal}
+                onConfirm={() => {
+                    handleConfirmAction();
+                    handleCloseConfirmModal();
+                }}
+            />
+        </>
+    )
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        gap: 12
+    },
+    button: {
+        paddingHorizontal: 16,
+        paddingVertical: 14,
+        borderRadius: 16,
+        backgroundColor: "#442626",
+        borderWidth: 1,
+        borderColor: "#7A3B3B",
+        gap: 4,
+    },
+    buttonDisabled: {
+        opacity: 0.4,
+    },
+    buttonText: {
+        color: "#ffe7e3",
+        fontSize: 16,
+        fontWeight: "700",
+    },
+    buttonHintText: {
+        color: "#D7C1BE",
+        fontSize: 13,
+    },
+})
