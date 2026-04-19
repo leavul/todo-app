@@ -1,4 +1,4 @@
-import { isIOS26Plus } from '@/utils/platform'
+import { isIOS26Plus } from '@/utils/device'
 import { Stack } from 'expo-router'
 import React from 'react'
 import { Platform } from 'react-native'
