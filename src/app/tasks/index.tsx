@@ -1,8 +1,8 @@
-import TodoCard from "@/components/todo-card";
-import TodoFormModal from "@/components/todo-form-modal";
+import TaskCard from "@/components/tasks/task-card";
+import TaskFormModal from "@/components/tasks/task-form-modal";
 import { useSettingsStore } from "@/store/use-settings-store";
-import { useTodoStore } from "@/store/use-todo-store";
-import { TodoItem } from "@/types/todo";
+import { useTaskStore } from "@/store/use-task-store";
+import { TaskItem } from "@/types/task";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useCallback, useState } from "react";
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -10,11 +10,11 @@ import Sortable from "react-native-sortables";
 
 const addButtonBottomOffset = Platform.OS === 'android' ? 30 : 100;
 
-type TodoFormModalState = {
+type TaskFormModalState = {
   visible: boolean;
   mode: "add" | "edit";
   title: string;
-  editingTodoId: string | null;
+  editingTaskId: string | null;
   inputValue: string;
   placeholder: string;
   showError?: boolean;
@@ -22,12 +22,19 @@ type TodoFormModalState = {
 
 export default function TasksScreen() {
   const { columns } = useSettingsStore();
-  const { todos, addTodo, toggleTodo, updateTodo, reorderTodos, removeTodo } = useTodoStore();
+  const {
+    tasks,
+    addTask,
+    toggleTask,
+    updateTask,
+    reorderTasks,
+    removeTask
+  } = useTaskStore();
 
-  const [todoFormModalState, setTodoFormModalState] = useState<TodoFormModalState | null>(null);
+  const [taskFormModalState, setTaskFormModalState] = useState<TaskFormModalState | null>(null);
 
-  const handleCloseTodoModal = () => {
-    setTodoFormModalState((currentState) => {
+  const handleCloseTaskModal = () => {
+    setTaskFormModalState((currentState) => {
       if (currentState === null) {
         return null;
       }
@@ -39,38 +46,38 @@ export default function TasksScreen() {
     });
   }
 
-  const handleSubmitTodo = () => {
-    if (!todoFormModalState) return;
+  const handleSubmitTask = () => {
+    if (!taskFormModalState) return;
 
-    if (todoFormModalState?.mode === "add") {
-      todoFormModalState.inputValue && addTodo(todoFormModalState.inputValue);
-    } else if (todoFormModalState?.mode === "edit") {
-      todoFormModalState.editingTodoId && updateTodo(todoFormModalState.editingTodoId, todoFormModalState.inputValue);
+    if (taskFormModalState?.mode === "add") {
+      taskFormModalState.inputValue && addTask(taskFormModalState.inputValue);
+    } else if (taskFormModalState?.mode === "edit") {
+      taskFormModalState.editingTaskId && updateTask(taskFormModalState.editingTaskId, taskFormModalState.inputValue);
     }
   };
 
   const handleToggleCompleted = (id: string) => {
-    toggleTodo(id);
+    toggleTask(id);
   };
 
-  const handlePressEdit = (todo: TodoItem) => {
-    setTodoFormModalState({
+  const handlePressEdit = (task: TaskItem) => {
+    setTaskFormModalState({
       visible: true,
       mode: "edit",
       title: "Edit Task",
-      editingTodoId: todo.id,
-      inputValue: todo.title,
-      placeholder: todo.title,
+      editingTaskId: task.id,
+      inputValue: task.title,
+      placeholder: task.title,
     });
   }
 
   const handleDelete = (id: string) => {
-    removeTodo(id);
+    removeTask(id);
   };
 
-  const renderItem = useCallback(({ item }: { item: TodoItem }) => (
-    <TodoCard
-      todo={item}
+  const renderItem = useCallback(({ item }: { item: TaskItem }) => (
+    <TaskCard
+      task={item}
       onToggleCompleted={() => handleToggleCompleted(item.id)}
       onEdit={() => handlePressEdit(item)}
       onDelete={() => handleDelete(item.id)}
@@ -79,23 +86,23 @@ export default function TasksScreen() {
 
   return (
     <>
-      {todos.length === 0 ? (
-        <View style={styles.noTodosContainer}>
-          <Text style={styles.noTodosText}>There is no tasks</Text>
-          <Text style={styles.noTodosText}>Add one to get started 🚀</Text>
+      {tasks.length === 0 ? (
+        <View style={styles.noTasksContainer}>
+          <Text style={styles.noTasksText}>There is no tasks</Text>
+          <Text style={styles.noTasksText}>Add one to get started 🚀</Text>
         </View>
       ) : (
         <ScrollView
-          style={styles.todosContainer}
-          contentContainerStyle={styles.todosContentContainer}
+          style={styles.tasksContainer}
+          contentContainerStyle={styles.tasksContentContainer}
           contentInsetAdjustmentBehavior="automatic"
         >
           <Sortable.Grid
             columns={columns}
-            data={todos}
+            data={tasks}
             keyExtractor={(item) => item.id}
             renderItem={renderItem}
-            onDragEnd={({ data }) => reorderTodos(data)}
+            onDragEnd={({ data }) => reorderTasks(data)}
             rowGap={16}
             columnGap={16}
           />
@@ -105,11 +112,11 @@ export default function TasksScreen() {
       <Pressable
         style={styles.addButton}
         onPress={() =>
-          setTodoFormModalState({
+          setTaskFormModalState({
             visible: true,
             mode: "add",
             title: "New Task",
-            editingTodoId: null,
+            editingTaskId: null,
             inputValue: "",
             placeholder: "Add a new task",
           })
@@ -118,18 +125,18 @@ export default function TasksScreen() {
         <FontAwesome6 name="plus" size={20} color="white" />
       </Pressable>
 
-      <TodoFormModal
-        visible={todoFormModalState?.visible ?? false}
-        title={todoFormModalState?.title ?? ""}
-        inputValue={todoFormModalState?.inputValue ?? ""}
-        inputPlaceholder={todoFormModalState?.placeholder ?? ""}
-        showError={todoFormModalState?.showError ?? false}
-        onChange={(inputValue) => setTodoFormModalState((currentState) => currentState ? { ...currentState, inputValue } : null)}
-        onChangeShowError={(showError) => setTodoFormModalState((currentState) => currentState ? { ...currentState, showError } : null)}
-        onClose={handleCloseTodoModal}
+      <TaskFormModal
+        visible={taskFormModalState?.visible ?? false}
+        title={taskFormModalState?.title ?? ""}
+        inputValue={taskFormModalState?.inputValue ?? ""}
+        inputPlaceholder={taskFormModalState?.placeholder ?? ""}
+        showError={taskFormModalState?.showError ?? false}
+        onChange={(inputValue) => setTaskFormModalState((currentState) => currentState ? { ...currentState, inputValue } : null)}
+        onChangeShowError={(showError) => setTaskFormModalState((currentState) => currentState ? { ...currentState, showError } : null)}
+        onClose={handleCloseTaskModal}
         onSubmit={() => {
-          handleSubmitTodo()
-          handleCloseTodoModal();
+          handleSubmitTask()
+          handleCloseTaskModal();
         }}
       />
     </>
@@ -137,7 +144,7 @@ export default function TasksScreen() {
 }
 
 const styles = StyleSheet.create({
-  noTodosContainer: {
+  noTasksContainer: {
     flex: 1,
     backgroundColor: "#212121",
     paddingHorizontal: 16,
@@ -145,16 +152,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  noTodosText: {
+  noTasksText: {
     color: "#757575",
   },
 
-  todosContainer: {
+  tasksContainer: {
     height: '100%',
     paddingHorizontal: 16,
     backgroundColor: "#212121",
   },
-  todosContentContainer: {
+  tasksContentContainer: {
     paddingTop: 16,
     paddingBottom: 120,
   },

@@ -1,7 +1,7 @@
-import { useTodoStore } from '@/store/use-todo-store';
+import { useTaskStore } from '@/store/use-task-store';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import ConfirmModal from '../confirm-modal';
+import ConfirmModal from './confirm-modal';
 import SectionCard from './section-card';
 
 type ConfirmAction = "clearCompleted" | "deleteAll";
@@ -37,11 +37,11 @@ function DangerZoneButton({
 }
 
 export default function DangerZoneSection() {
-    const { todos, clearCompletedTodos, deleteAllTodos } = useTodoStore();
+    const { tasks, clearCompletedTasks, deleteAllTasks } = useTaskStore();
     const [confirmModalState, setConfirmModalState] = useState<ConfirmModalState | null>(null);
 
-    const completedTodosCount = todos.filter((todo) => todo.completed).length;
-    const totalTodosCount = todos.length;
+    const completedTasksCount = tasks.filter((task) => task.completed).length;
+    const totalTasksCount = tasks.length;
 
     const handleCloseConfirmModal = () => {
         setConfirmModalState((currentState) => {
@@ -58,11 +58,11 @@ export default function DangerZoneSection() {
 
     const handleConfirmAction = () => {
         if (confirmModalState?.action === "clearCompleted") {
-            clearCompletedTodos();
+            clearCompletedTasks();
         }
 
         if (confirmModalState?.action === "deleteAll") {
-            deleteAllTodos();
+            deleteAllTasks();
         }
     };
 
@@ -81,31 +81,31 @@ export default function DangerZoneSection() {
                 <View style={styles.container}>
                     <DangerZoneButton
                         title='Clear Completed Tasks'
-                        hintText={completedTodosCount === 0
+                        hintText={completedTasksCount === 0
                             ? "No completed tasks to remove"
-                            : `${completedTodosCount} completed task${completedTodosCount === 1 ? "" : "s"} ready to clear`}
-                        disabled={completedTodosCount === 0}
+                            : `${completedTasksCount} completed task${completedTasksCount === 1 ? "" : "s"} ready to clear`}
+                        disabled={completedTasksCount === 0}
                         onPress={() =>
                             setConfirmModalState({
                                 visible: true,
                                 action: "clearCompleted",
                                 title: "Clear Completed Tasks?",
-                                message: `This will remove ${completedTodosCount} completed task${completedTodosCount === 1 ? "" : "s"}.`,
+                                message: `This will remove ${completedTasksCount} completed task${completedTasksCount === 1 ? "" : "s"}.`,
                                 confirmLabel: "Clear",
                             })}
                     />
                     <DangerZoneButton
                         title='Delete All Tasks'
-                        hintText={totalTodosCount === 0
+                        hintText={totalTasksCount === 0
                             ? "No tasks to delete"
-                            : `${totalTodosCount} task${totalTodosCount === 1 ? "" : "s"} will be removed`}
-                        disabled={totalTodosCount === 0}
+                            : `${totalTasksCount} task${totalTasksCount === 1 ? "" : "s"} will be removed`}
+                        disabled={totalTasksCount === 0}
                         onPress={() =>
                             setConfirmModalState({
                                 visible: true,
                                 action: "deleteAll",
                                 title: "Delete All Tasks?",
-                                message: `This will permanently remove ${totalTodosCount} task${totalTodosCount === 1 ? "" : "s"}.`,
+                                message: `This will permanently remove ${totalTasksCount} task${totalTasksCount === 1 ? "" : "s"}.`,
                                 confirmLabel: "Delete All",
                             })
                         }

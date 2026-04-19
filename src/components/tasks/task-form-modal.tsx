@@ -1,7 +1,7 @@
+import ModalShell from "@/components/ui/modal-shell";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import ModalShell from "./ui/modal-shell";
 
-type TodoFormModalProps = {
+type TaskFormModalProps = {
     visible: boolean;
     title: string;
     inputValue: string;
@@ -13,7 +13,7 @@ type TodoFormModalProps = {
     onSubmit: () => void;
 };
 
-export default function TodoFormModal({
+export default function TaskFormModal({
     visible,
     title,
     inputValue,
@@ -23,7 +23,7 @@ export default function TodoFormModal({
     onChangeShowError,
     onClose,
     onSubmit,
-}: TodoFormModalProps) {
+}: TaskFormModalProps) {
 
     const handleSubmit = () => {
         if (inputValue.trim() === "") {

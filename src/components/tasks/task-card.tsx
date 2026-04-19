@@ -1,25 +1,25 @@
-import type { TodoItem } from '@/types/todo';
+import type { TaskItem } from '@/types/task';
 import { FontAwesome5, FontAwesome6 } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-type TodoItemProps = {
-    todo: TodoItem;
+type TaskItemProps = {
+    task: TaskItem;
     onToggleCompleted: () => void;
     onEdit: () => void;
     onDelete: () => void;
 }
-export default function TodoCard({ todo, onToggleCompleted, onEdit, onDelete }: TodoItemProps) {
+export default function TaskCard({ task, onToggleCompleted, onEdit, onDelete }: TaskItemProps) {
     return (
         <View style={styles.container}>
             <Pressable
-                style={[styles.checkbox, todo.completed && styles.checkboxCompleted]}
+                style={[styles.checkbox, task.completed && styles.checkboxCompleted]}
                 onPress={() => onToggleCompleted()}
             >
-                {todo.completed && <FontAwesome5 name="check" size={12} color="black" />}
+                {task.completed && <FontAwesome5 name="check" size={12} color="black" />}
             </Pressable>
 
             <View style={styles.taskContent}>
-                <Text style={[styles.title, todo.completed && styles.titleCompleted]}>{todo.title}</Text>
+                <Text style={[styles.title, task.completed && styles.titleCompleted]}>{task.title}</Text>
 
                 <View style={styles.actionsContainer}>
                     <Pressable

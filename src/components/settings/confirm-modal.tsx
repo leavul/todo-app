@@ -1,5 +1,5 @@
+import ModalShell from "@/components/ui/modal-shell";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import ModalShell from "./ui/modal-shell";
 
 type ConfirmModalProps = {
     visible: boolean;
