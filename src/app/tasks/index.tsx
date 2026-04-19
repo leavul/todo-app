@@ -88,7 +88,6 @@ export default function TasksScreen() {
         <ScrollView
           style={styles.todosContainer}
           contentContainerStyle={styles.todosContentContainer}
-          showsVerticalScrollIndicator={false}
           contentInsetAdjustmentBehavior="automatic"
         >
           <Sortable.Grid
