@@ -1,3 +1,4 @@
+import { isIOS26Plus } from '@/utils/platform'
 import { Stack } from 'expo-router'
 import React from 'react'
 import { Platform } from 'react-native'
@@ -12,8 +13,9 @@ export default function SettingsLayout() {
                     title: "Settings",
                     headerLargeTitleEnabled: true,
                     headerStyle: {
-                        backgroundColor: Platform.OS === 'android' ? '#303030' : undefined,
+                        backgroundColor: Platform.OS === 'android' || !isIOS26Plus ? '#303030' : undefined,
                     },
+                    headerShadowVisible: true,
                     headerTitleStyle: {
                         color: 'white',
                     },

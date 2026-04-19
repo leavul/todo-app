@@ -7,7 +7,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" />
-      
+
       <KeyboardProvider>
         <NativeTabs
           backgroundColor={'#303030'}
@@ -15,7 +15,8 @@ export default function RootLayout() {
           rippleColor={"white"}
           tintColor={'white'}
           labelStyle={{ selected: { color: 'white' } }}
-
+          disableTransparentOnScrollEdge={true}
+          shadowColor='#555555'
         >
           <NativeTabs.Trigger name="tasks">
             <NativeTabs.Trigger.Label>Tasks</NativeTabs.Trigger.Label>
