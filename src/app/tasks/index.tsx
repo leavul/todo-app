@@ -21,7 +21,10 @@ type TaskFormModalState = {
 };
 
 export default function TasksScreen() {
-  const { columns } = useSettingsStore();
+  const {
+    showTaskNumbers,
+    tasksGridColumns
+  } = useSettingsStore();
   const {
     tasks,
     addTask,
@@ -75,8 +78,17 @@ export default function TasksScreen() {
     removeTask(id);
   };
 
-  const renderItem = useCallback(({ item }: { item: TaskItem }) => (
+  const renderItem = useCallback(({
+    canShowTaskNumber,
+    index,
+    item
+  }: {
+    canShowTaskNumber: boolean,
+    index: number,
+    item: TaskItem
+  }) => (
     <TaskCard
+      taskNumber={canShowTaskNumber ? index + 1 : undefined}
       task={item}
       onToggleCompleted={() => handleToggleCompleted(item.id)}
       onEdit={() => handlePressEdit(item)}
@@ -98,10 +110,13 @@ export default function TasksScreen() {
           contentInsetAdjustmentBehavior="automatic"
         >
           <Sortable.Grid
-            columns={columns}
+            columns={tasksGridColumns}
             data={tasks}
             keyExtractor={(item) => item.id}
-            renderItem={renderItem}
+            renderItem={({ index, item }) => {
+              const canShowTaskNumber = showTaskNumbers === 'numbered';
+              return renderItem({ canShowTaskNumber, index, item });
+            }}
             onDragEnd={({ data }) => reorderTasks(data)}
             rowGap={16}
             columnGap={16}

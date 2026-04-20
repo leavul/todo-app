@@ -3,12 +3,13 @@ import { FontAwesome5, FontAwesome6 } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 type TaskItemProps = {
+    taskNumber?: number;
     task: TaskItem;
     onToggleCompleted: () => void;
     onEdit: () => void;
     onDelete: () => void;
 }
-export default function TaskCard({ task, onToggleCompleted, onEdit, onDelete }: TaskItemProps) {
+export default function TaskCard({ taskNumber, task, onToggleCompleted, onEdit, onDelete }: TaskItemProps) {
     return (
         <View style={styles.container}>
             <Pressable
@@ -19,7 +20,7 @@ export default function TaskCard({ task, onToggleCompleted, onEdit, onDelete }: 
             </Pressable>
 
             <View style={styles.taskContent}>
-                <Text style={[styles.title, task.completed && styles.titleCompleted]}>{task.title}</Text>
+                <Text style={[styles.title, task.completed && styles.titleCompleted]}>{taskNumber !== undefined && `${taskNumber}. `}{task.title}</Text>
 
                 <View style={styles.actionsContainer}>
                     <Pressable

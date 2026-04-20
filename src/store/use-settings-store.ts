@@ -1,16 +1,22 @@
 import { zustandStorage } from "@/storage";
+import { TaskNumbering, TasksGridColumns } from "@/types/settings";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 type SettingsStore = {
-    columns: 1 | 2;
-    setColumns: (columns: 1 | 2) => void;
+    showTaskNumbers: TaskNumbering;
+    tasksGridColumns: TasksGridColumns;
+
+    setTasksGridColumns: (columns: TasksGridColumns) => void;
+    setShowTaskNumbers: (taskNumbering: TaskNumbering) => void;
 }
 
 export const useSettingsStore = create<SettingsStore>()(persist((set) => ({
-    columns: 2,
+    showTaskNumbers: 'none',
+    tasksGridColumns: 1,
 
-    setColumns: (columns) => set({ columns }),
+    setShowTaskNumbers: (taskNumbering) => set({ showTaskNumbers: taskNumbering }),
+    setTasksGridColumns: (columns) => set({ tasksGridColumns: columns }),
 }), {
     name: 'settings-storage',
     storage: createJSONStorage(() => zustandStorage),
