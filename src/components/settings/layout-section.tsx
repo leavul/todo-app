@@ -5,8 +5,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import SectionCard from './section-card';
 
 const numberingOptions: { value: TaskNumbering; label: string; previewText: string }[] = [
-    { value: 'none', label: 'Without order', previewText: 'Rate Doit' },
-    { value: 'numbered', label: 'With order', previewText: '1. Rate Doit' },
+    { value: 'none', label: 'None', previewText: 'Rate Doit' },
+    { value: 'numbered', label: 'Numbered', previewText: '1. Rate Doit' },
 ];
 
 const columnsOptions: { value: TasksGridColumns; label: string }[] = [
@@ -44,40 +44,52 @@ export default function LayoutSection() {
         <SectionCard
             title="Layout"
             description="Choose how tasks are displayed.">
-            <View style={styles.optionsRow}>
-                {numberingOptions.map(({ value, label, previewText }) => (
-                    <OptionCard
-                        key={value}
-                        isSelected={showTaskNumbers === value}
-                        label={label}
-                        onPress={() => setShowTaskNumbers(value)}>
-                        <View style={[styles.optionBar, styles.optionBarText]}>
-                            <Text style={[styles.optionLabel, showTaskNumbers === value && styles.optionLabelSelected]} numberOfLines={1} adjustsFontSizeToFit>
-                                {previewText}
-                            </Text>
-                        </View>
-                    </OptionCard>
-                ))}
-            </View>
-
-            <View style={styles.optionsRow}>
-                {columnsOptions.map(({ value, label }) => (
-                    <OptionCard
-                        key={value}
-                        isSelected={tasksGridColumns === value}
-                        label={label}
-                        onPress={() => setTasksGridColumns(value)}>
-                        <View style={styles.optionBarRow}>
-                            {Array.from({ length: value }).map((_, i) => (
-                                <View key={i} style={styles.optionBarRowItem}>
-                                    <View style={styles.optionBar} />
-                                    <View style={styles.optionBar} />
+            <>
+                <SectionCard
+                    size="compact"
+                    title="Numbering"
+                    description="Show a number next to each task to track their order.">
+                    <View style={styles.optionsRow}>
+                        {numberingOptions.map(({ value, label, previewText }) => (
+                            <OptionCard
+                                key={value}
+                                isSelected={showTaskNumbers === value}
+                                label={label}
+                                onPress={() => setShowTaskNumbers(value)}>
+                                <View style={[styles.optionBar, styles.optionBarText]}>
+                                    <Text style={[styles.optionLabel, showTaskNumbers === value && styles.optionLabelSelected]} numberOfLines={1} adjustsFontSizeToFit>
+                                        {previewText}
+                                    </Text>
                                 </View>
-                            ))}
-                        </View>
-                    </OptionCard>
-                ))}
-            </View>
+                            </OptionCard>
+                        ))}
+                    </View>
+                </SectionCard>
+
+                <SectionCard
+                    size="compact"
+                    title="Columns"
+                    description="Choose how many columns tasks are displayed in.">
+                    <View style={styles.optionsRow}>
+                        {columnsOptions.map(({ value, label }) => (
+                            <OptionCard
+                                key={value}
+                                isSelected={tasksGridColumns === value}
+                                label={label}
+                                onPress={() => setTasksGridColumns(value)}>
+                                <View style={styles.optionBarRow}>
+                                    {Array.from({ length: value }).map((_, i) => (
+                                        <View key={i} style={styles.optionBarRowItem}>
+                                            <View style={styles.optionBar} />
+                                            <View style={styles.optionBar} />
+                                        </View>
+                                    ))}
+                                </View>
+                            </OptionCard>
+                        ))}
+                    </View>
+                </SectionCard>
+            </>
         </SectionCard>
     );
 }
