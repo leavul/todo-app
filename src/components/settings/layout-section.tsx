@@ -1,18 +1,9 @@
 import { useSettingsStore } from '@/store/use-settings-store';
 import { TaskNumbering, TasksGridColumns } from '@/types/settings';
 import { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import SectionCard from './section-card';
-
-const numberingOptions: { value: TaskNumbering; label: string; previewText: string }[] = [
-    { value: 'none', label: 'None', previewText: 'Rate Doit' },
-    { value: 'numbered', label: 'Numbered', previewText: '1. Rate Doit' },
-];
-
-const columnsOptions: { value: TasksGridColumns; label: string }[] = [
-    { value: 1, label: '1 Column' },
-    { value: 2, label: '2 Columns' },
-];
 
 function OptionCard({ isSelected, onPress, label, children }: {
     isSelected: boolean;
@@ -33,22 +24,34 @@ function OptionCard({ isSelected, onPress, label, children }: {
 }
 
 export default function LayoutSection() {
+    const { t } = useTranslation();
     const {
         showTaskNumbers,
         setShowTaskNumbers,
         tasksGridColumns,
-        setTasksGridColumns
+        setTasksGridColumns,
+        setLanguage
     } = useSettingsStore();
+
+    const numberingOptions: { value: TaskNumbering; label: string; previewText: string }[] = [
+        { value: 'none', label: t('layout.numbering_none'), previewText: t('layout.preview_task') },
+        { value: 'numbered', label: t('layout.numbering_numbered'), previewText: `1. ${t('layout.preview_task')}` },
+    ];
+
+    const columnsOptions: { value: TasksGridColumns; label: string }[] = [
+        { value: 1, label: t('layout.columns_one_label') },
+        { value: 2, label: t('layout.columns_two_label') },
+    ];
 
     return (
         <SectionCard
-            title="Layout"
-            description="Choose how tasks are displayed.">
+            title={t('layout.title')}
+            description={t('layout.description')}>
             <>
                 <SectionCard
                     size="compact"
-                    title="Numbering"
-                    description="Show a number next to each task to track their order.">
+                    title={t('layout.numbering')}
+                    description={t('layout.numbering_description')}>
                     <View style={styles.optionsRow}>
                         {numberingOptions.map(({ value, label, previewText }) => (
                             <OptionCard
@@ -68,8 +71,8 @@ export default function LayoutSection() {
 
                 <SectionCard
                     size="compact"
-                    title="Columns"
-                    description="Choose how many columns tasks are displayed in.">
+                    title={t('layout.columns')}
+                    description={t('layout.columns_description')}>
                     <View style={styles.optionsRow}>
                         {columnsOptions.map(({ value, label }) => (
                             <OptionCard
@@ -89,6 +92,8 @@ export default function LayoutSection() {
                         ))}
                     </View>
                 </SectionCard>
+                <Text onPress={() => setLanguage('ar')}>to arabic</Text>
+                <Text onPress={() => setLanguage('en')}>to english</Text>
             </>
         </SectionCard>
     );

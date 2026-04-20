@@ -1,9 +1,13 @@
+import '@/i18n/i18next';
 import { NativeTabs } from "expo-router/unstable-native-tabs";
+import { useTranslation } from "react-i18next";
 import { StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 
 export default function RootLayout() {
+  const { t } = useTranslation();
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" />
@@ -19,7 +23,7 @@ export default function RootLayout() {
           shadowColor='#555555'
         >
           <NativeTabs.Trigger name="tasks">
-            <NativeTabs.Trigger.Label>Tasks</NativeTabs.Trigger.Label>
+            <NativeTabs.Trigger.Label>{t('tasks.title')}</NativeTabs.Trigger.Label>
             <NativeTabs.Trigger.Icon
               sf={{ default: 'list.bullet.clipboard', selected: 'list.bullet.clipboard.fill' }}
               md="checklist"
@@ -27,7 +31,7 @@ export default function RootLayout() {
           </NativeTabs.Trigger>
 
           <NativeTabs.Trigger name="settings">
-            <NativeTabs.Trigger.Label>Settings</NativeTabs.Trigger.Label>
+            <NativeTabs.Trigger.Label>{t('settings.title')}</NativeTabs.Trigger.Label>
             <NativeTabs.Trigger.Icon
               sf={{ default: 'gearshape', selected: 'gearshape.fill' }}
               md="settings"

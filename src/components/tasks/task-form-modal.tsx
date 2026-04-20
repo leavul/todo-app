@@ -1,4 +1,5 @@
 import ModalShell from "@/components/ui/modal-shell";
+import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 type TaskFormModalProps = {
@@ -24,6 +25,7 @@ export default function TaskFormModal({
     onClose,
     onSubmit,
 }: TaskFormModalProps) {
+    const { t } = useTranslation();
 
     const handleSubmit = () => {
         if (inputValue.trim() === "") {
@@ -62,7 +64,7 @@ export default function TaskFormModal({
             />
 
             {showError && (
-                <Text style={styles.errorText}>Cannot be empty</Text>
+                <Text style={styles.errorText}>{t('form.cannot_be_empty')}</Text>
             )}
 
             <View style={styles.actionButtonsContainer}>
@@ -70,14 +72,14 @@ export default function TaskFormModal({
                     style={[styles.actionButton, styles.cancelButton]}
                     onPress={onClose}
                 >
-                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                    <Text style={styles.cancelButtonText}>{t('form.cancel')}</Text>
                 </Pressable>
 
                 <Pressable
                     style={[styles.actionButton, styles.submitButton]}
                     onPress={handleSubmit}
                 >
-                    <Text style={styles.submitButtonText}>Save</Text>
+                    <Text style={styles.submitButtonText}>{t('form.save')}</Text>
                 </Pressable>
             </View>
         </ModalShell>

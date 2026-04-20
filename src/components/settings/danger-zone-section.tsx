@@ -1,5 +1,6 @@
 import { useTaskStore } from '@/store/use-task-store';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import ConfirmModal from './confirm-modal';
 import SectionCard from './section-card';
@@ -37,6 +38,7 @@ function DangerZoneButton({
 }
 
 export default function DangerZoneSection() {
+    const { t } = useTranslation();
     const { tasks, clearCompletedTasks, deleteAllTasks } = useTaskStore();
     const [confirmModalState, setConfirmModalState] = useState<ConfirmModalState | null>(null);
 
@@ -72,41 +74,41 @@ export default function DangerZoneSection() {
                 backgroundColor="#2B1F1F"
                 borderColor="#5C2E2E"
 
-                title='Danger Zone'
+                title={t('danger.title')}
                 titleColor='#fff1f0'
 
-                description='These actions remove tasks and cannot be undone.'
+                description={t('danger.description')}
                 descriptionColor='#D7C1BE'
             >
                 <View style={styles.container}>
                     <DangerZoneButton
-                        title='Clear Completed Tasks'
+                        title={t('danger.clear_completed')}
                         hintText={completedTasksCount === 0
-                            ? "No completed tasks to remove"
-                            : `${completedTasksCount} completed task${completedTasksCount === 1 ? "" : "s"} ready to clear`}
+                            ? t('danger.clear_completed_empty')
+                            : t('danger.clear_completed_hint', { count: completedTasksCount })}
                         disabled={completedTasksCount === 0}
                         onPress={() =>
                             setConfirmModalState({
                                 visible: true,
                                 action: "clearCompleted",
-                                title: "Clear Completed Tasks?",
-                                message: `This will remove ${completedTasksCount} completed task${completedTasksCount === 1 ? "" : "s"}.`,
-                                confirmLabel: "Clear",
+                                title: t('danger.clear_modal_title'),
+                                message: t('danger.clear_modal_message', { count: completedTasksCount }),
+                                confirmLabel: t('danger.clear_confirm'),
                             })}
                     />
                     <DangerZoneButton
-                        title='Delete All Tasks'
+                        title={t('danger.delete_all')}
                         hintText={totalTasksCount === 0
-                            ? "No tasks to delete"
-                            : `${totalTasksCount} task${totalTasksCount === 1 ? "" : "s"} will be removed`}
+                            ? t('danger.delete_all_empty')
+                            : t('danger.delete_all_hint', { count: totalTasksCount })}
                         disabled={totalTasksCount === 0}
                         onPress={() =>
                             setConfirmModalState({
                                 visible: true,
                                 action: "deleteAll",
-                                title: "Delete All Tasks?",
-                                message: `This will permanently remove ${totalTasksCount} task${totalTasksCount === 1 ? "" : "s"}.`,
-                                confirmLabel: "Delete All",
+                                title: t('danger.delete_all_modal_title'),
+                                message: t('danger.delete_all_modal_message', { count: totalTasksCount }),
+                                confirmLabel: t('danger.delete_all_confirm'),
                             })
                         }
                     />

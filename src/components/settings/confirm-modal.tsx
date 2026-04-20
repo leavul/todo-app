@@ -1,4 +1,5 @@
 import ModalShell from "@/components/ui/modal-shell";
+import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type ConfirmModalProps = {
@@ -17,11 +18,14 @@ export default function ConfirmModal({
     title,
     message,
     confirmLabel,
-    cancelLabel = "Cancel",
+    cancelLabel,
     destructive = false,
     onClose,
     onConfirm,
 }: ConfirmModalProps) {
+    const { t } = useTranslation();
+    const resolvedCancelLabel = cancelLabel ?? t('form.cancel');
+
     return (
         <ModalShell
             visible={visible}
@@ -35,7 +39,7 @@ export default function ConfirmModal({
                     style={[styles.actionButton, styles.cancelButton]}
                     onPress={onClose}
                 >
-                    <Text style={styles.cancelButtonText}>{cancelLabel}</Text>
+                    <Text style={styles.cancelButtonText}>{resolvedCancelLabel}</Text>
                 </Pressable>
 
                 <Pressable

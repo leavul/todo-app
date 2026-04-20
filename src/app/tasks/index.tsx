@@ -5,6 +5,7 @@ import { useTaskStore } from "@/store/use-task-store";
 import { TaskItem } from "@/types/task";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Sortable from "react-native-sortables";
 
@@ -21,9 +22,10 @@ type TaskFormModalState = {
 };
 
 export default function TasksScreen() {
+  const { t } = useTranslation();
   const {
     showTaskNumbers,
-    tasksGridColumns
+    tasksGridColumns,
   } = useSettingsStore();
   const {
     tasks,
@@ -67,7 +69,7 @@ export default function TasksScreen() {
     setTaskFormModalState({
       visible: true,
       mode: "edit",
-      title: "Edit Task",
+      title: t('tasks.edit_title'),
       editingTaskId: task.id,
       inputValue: task.title,
       placeholder: task.title,
@@ -95,13 +97,14 @@ export default function TasksScreen() {
       onDelete={() => handleDelete(item.id)}
     />
   ), []);
+  
 
   return (
     <>
       {tasks.length === 0 ? (
         <View style={styles.noTasksContainer}>
-          <Text style={styles.noTasksText}>There is no tasks</Text>
-          <Text style={styles.noTasksText}>Add one to get started 🚀</Text>
+          <Text style={styles.noTasksText}>{t('tasks.empty')}</Text>
+          <Text style={styles.noTasksText}>{t('tasks.empty_hint')}</Text>
         </View>
       ) : (
         <ScrollView
@@ -130,10 +133,10 @@ export default function TasksScreen() {
           setTaskFormModalState({
             visible: true,
             mode: "add",
-            title: "New Task",
+            title: t('tasks.add_title'),
             editingTaskId: null,
             inputValue: "",
-            placeholder: "Add a new task",
+            placeholder: t('tasks.add_placeholder'),
           })
         }
       >
