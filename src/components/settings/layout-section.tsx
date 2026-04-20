@@ -1,7 +1,18 @@
 import { useSettingsStore } from '@/store/use-settings-store';
+import { TaskNumbering, TasksGridColumns } from '@/types/settings';
 import { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import SectionCard from './section-card';
+
+const numberingOptions: { value: TaskNumbering; label: string; previewText: string }[] = [
+    { value: 'none', label: 'Without order', previewText: 'Rate Doit' },
+    { value: 'numbered', label: 'With order', previewText: '1. Rate Doit' },
+];
+
+const columnsOptions: { value: TasksGridColumns; label: string }[] = [
+    { value: 1, label: '1 Column' },
+    { value: 2, label: '2 Columns' },
+];
 
 function OptionCard({ isSelected, onPress, label, children }: {
     isSelected: boolean;
@@ -34,54 +45,38 @@ export default function LayoutSection() {
             title="Layout"
             description="Choose how tasks are displayed.">
             <View style={styles.optionsRow}>
-                <OptionCard
-                    isSelected={showTaskNumbers === 'none'}
-                    label="Without order"
-                    onPress={() => setShowTaskNumbers('none')}>
-                    <View style={[styles.optionBar, styles.optionBarText]}>
-                        <Text style={[styles.optionLabel, showTaskNumbers === 'none' && styles.optionLabelSelected]}>
-                            Rate Doit
-                        </Text>
-                    </View>
-                </OptionCard>
-                <OptionCard
-                    isSelected={showTaskNumbers === 'numbered'}
-                    label="With order"
-                    onPress={() => setShowTaskNumbers('numbered')}>
-                    <View style={[styles.optionBar, styles.optionBarText]}>
-                        <Text style={[styles.optionLabel, showTaskNumbers === 'numbered' && styles.optionLabelSelected]}>
-                            1. Rate Doit
-                        </Text>
-                    </View>
-                </OptionCard>
+                {numberingOptions.map(({ value, label, previewText }) => (
+                    <OptionCard
+                        key={value}
+                        isSelected={showTaskNumbers === value}
+                        label={label}
+                        onPress={() => setShowTaskNumbers(value)}>
+                        <View style={[styles.optionBar, styles.optionBarText]}>
+                            <Text style={[styles.optionLabel, showTaskNumbers === value && styles.optionLabelSelected]} numberOfLines={1} adjustsFontSizeToFit>
+                                {previewText}
+                            </Text>
+                        </View>
+                    </OptionCard>
+                ))}
             </View>
 
             <View style={styles.optionsRow}>
-                <OptionCard
-                    isSelected={tasksGridColumns === 1}
-                    label="1 Column"
-                    onPress={() => setTasksGridColumns(1)}>
-                    <View style={styles.optionBarStack}>
-                        <View style={styles.optionBar} />
-                        <View style={styles.optionBar} />
-                    </View>
-                </OptionCard>
-
-                <OptionCard
-                    isSelected={tasksGridColumns === 2}
-                    label="2 Columns"
-                    onPress={() => setTasksGridColumns(2)}>
-                    <View style={styles.optionBarRow}>
-                        <View style={styles.optionBarStack}>
-                            <View style={styles.optionBar} />
-                            <View style={styles.optionBar} />
+                {columnsOptions.map(({ value, label }) => (
+                    <OptionCard
+                        key={value}
+                        isSelected={tasksGridColumns === value}
+                        label={label}
+                        onPress={() => setTasksGridColumns(value)}>
+                        <View style={styles.optionBarRow}>
+                            {Array.from({ length: value }).map((_, i) => (
+                                <View key={i} style={styles.optionBarRowItem}>
+                                    <View style={styles.optionBar} />
+                                    <View style={styles.optionBar} />
+                                </View>
+                            ))}
                         </View>
-                        <View style={styles.optionBarStack}>
-                            <View style={styles.optionBar} />
-                            <View style={styles.optionBar} />
-                        </View>
-                    </View>
-                </OptionCard>
+                    </OptionCard>
+                ))}
             </View>
         </SectionCard>
     );
@@ -119,21 +114,22 @@ const styles = StyleSheet.create({
 
     optionBar: {
         width: '100%',
-        minHeight: 32,
-        paddingVertical: 12,
-        paddingHorizontal: 32,
+        height: 32,
         borderRadius: 6,
         backgroundColor: "#555555",
     },
 
     optionBarText: {
+        justifyContent: 'center',
         paddingHorizontal: 12,
-    },
-    optionBarStack: {
-        gap: 6,
     },
     optionBarRow: {
         flexDirection: 'row',
+        width: '100%',
+        gap: 6,
+    },
+    optionBarRowItem: {
+        flex: 1,
         gap: 6,
     },
 });
